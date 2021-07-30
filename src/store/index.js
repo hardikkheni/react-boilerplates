@@ -8,9 +8,8 @@ const sagaMiddleware = createSagaMiddleware();
 
 const composeEnhancers =
 	// eslint-disable-next-line no-undef
-	process.env.NODE_ENV !== 'production'
-		? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-		: compose || compose;
+	(process.env.NODE_ENV !== 'production' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose) ||
+	compose;
 export const store = createStore(
 	combineReducers({
 		theme,
