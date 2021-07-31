@@ -7,7 +7,10 @@ import {
 	METAMASK_REQUIRED,
 } from '../actions/metamask.action';
 
-const provider = window.ethereum || (window.web3 && window.web3.currentProvider);
+const provider =
+	window.ethereum ||
+	// metamask lagacy version
+	(window.web3 && window.web3.currentProvider);
 
 const initState = {
 	web3: provider && new Web3(provider),
@@ -37,6 +40,7 @@ const reducer = (state = initState, action) => {
 				account: action.account,
 				networkId: action.networkId,
 				chainId: action.chainId,
+				error: null,
 			};
 		case METAMASK_CONNECTING:
 			return { ...state, connecting: true };
