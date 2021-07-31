@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import 'regenerator-runtime/runtime';
 import rootSaga from './watchers';
 import theme from './reducers/theme.reducer';
+import metamask, { intiMetaMask } from './reducers/metamsk.reducer';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -13,8 +14,11 @@ const composeEnhancers =
 export const store = createStore(
 	combineReducers({
 		theme,
+		metamask,
 	}),
 	composeEnhancers(applyMiddleware(sagaMiddleware)),
 );
 
 sagaMiddleware.run(rootSaga);
+
+intiMetaMask(store.dispatch);

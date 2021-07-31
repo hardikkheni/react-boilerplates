@@ -9,3 +9,12 @@
 	height: calc(100vh - 50px);
 	justify-content: center;
 }
+
+.align-center {
+	text-align: center;
+	margin-top: 40px;
+}
+
+.card {
+	width: 500px;
+}
