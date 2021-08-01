@@ -38,7 +38,11 @@ const App = () => {
 							text={connected ? 'Connected' : 'Connect Wallet'}
 							intent={connected ? 'success' : 'warning'}
 							icon={connected ? 'link' : 'feed'}
-							onClick={() => dispatch({ type: METAMASK_CONNECT })}
+							onClick={() => {
+								if (!connected) {
+									dispatch({ type: METAMASK_CONNECT });
+								}
+							}}
 						/>
 					</div>
 				</Card>

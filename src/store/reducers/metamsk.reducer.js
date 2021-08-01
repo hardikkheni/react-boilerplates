@@ -41,6 +41,7 @@ const reducer = (state = initState, action) => {
 				networkId: action.networkId,
 				chainId: action.chainId,
 				error: null,
+				balance: 0,
 			};
 		case METAMASK_CONNECTING:
 			return { ...state, connecting: true };
