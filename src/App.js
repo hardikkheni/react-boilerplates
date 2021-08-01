@@ -1,5 +1,5 @@
 import { Card, Elevation } from '@blueprintjs/core';
-import Header from './store/components/Navbar';
+import Header from './components/Navbar';
 
 const App = () => {
 	return (
