@@ -1,7 +1,7 @@
 import { Button, Card, Elevation, Label } from '@blueprintjs/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { METAMASK_CONNECT } from './store/actions/metamask.action';
-import Header from './store/components/Navbar';
+import Header from './components/Navbar';
 import {
 	mmAccountSelector,
 	mmBalanceSelector,
