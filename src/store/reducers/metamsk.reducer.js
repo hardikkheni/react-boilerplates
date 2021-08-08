@@ -4,17 +4,13 @@ import {
 	METAMASK_BALANCE_REQUESTED,
 	METAMASK_CONNECTED,
 	METAMASK_CONNECTING,
+	METAMASK_INIT,
 	METAMASK_REQUIRED,
 } from '../actions/metamask.action';
 
-const provider =
-	window.ethereum ||
-	// metamask lagacy version
-	(window.web3 && window.web3.currentProvider);
-
 const initState = {
-	web3: provider && new Web3(provider),
-	provider,
+	web3: null,
+	provider: null,
 	account: null,
 	networkId: null,
 	chainId: null,
@@ -31,6 +27,12 @@ const reducer = (state = initState, action) => {
 				...state,
 				error: action.message || 'MetaMask installation is required!',
 				connecting: false,
+			};
+		case METAMASK_INIT:
+			return {
+				...state,
+				provider: action.provider,
+				web3: new Web3(action.provider),
 			};
 		case METAMASK_CONNECTED:
 			return {
@@ -55,39 +57,49 @@ const reducer = (state = initState, action) => {
 export default reducer;
 
 export function intiMetaMask(dispatch) {
-	if (!provider) {
-		dispatch({ type: METAMASK_REQUIRED });
-		return;
-	}
-
 	// on app load if user already connected then sync with metamask
 	window.addEventListener('load', async () => {
-		// on load need to wait for 5 miliseconds to get account from metamask
-		await new Promise((res) => setTimeout(res, 5));
-		const { selectedAddress: account, networkVersion: networkId, chainId } = provider;
-		dispatch({ type: METAMASK_CONNECTED, account, chainId, networkId });
-		if (account) {
-			dispatch({ type: METAMASK_BALANCE_REQUESTED });
+		const provider =
+			window.ethereum ||
+			// metamask lagacy version
+			(window.web3 && window.web3.currentProvider);
+
+		if (!provider) {
+			dispatch({ type: METAMASK_REQUIRED });
+			return;
 		}
-	});
+		dispatch({ type: METAMASK_INIT, provider });
 
-	// metamask events
-	provider.on('disconnect', (...args) => {
-		console.log(...args, 'disconnect');
-	});
+		// metamask events
+		provider.on('disconnect', (...args) => {
+			console.log(...args, 'disconnect');
+		});
 
-	provider.on('message', (...args) => {
-		console.log(...args, 'message');
-	});
+		provider.on('message', (...args) => {
+			console.log(...args, 'message');
+		});
 
-	provider.on('chainChanged', (chainId) => {
-		const { selectedAddress: account } = provider;
-		dispatch({ type: METAMASK_CONNECTED, account, chainId, networkId: Number(chainId).toString() });
-	});
+		provider.on('chainChanged', (chainId) => {
+			const { selectedAddress: account } = provider;
+			dispatch({
+				type: METAMASK_CONNECTED,
+				account,
+				chainId,
+				networkId: Number(chainId).toString(),
+			});
+		});
 
-	provider.on('accountsChanged', (accounts) => {
-		const { networkVersion: networkId, chainId } = provider;
-		const account = accounts[0] || null;
+		provider.on('accountsChanged', (accounts) => {
+			const { networkVersion: networkId, chainId } = provider;
+			const account = accounts[0] || null;
+			dispatch({ type: METAMASK_CONNECTED, account, chainId, networkId });
+			if (account) {
+				dispatch({ type: METAMASK_BALANCE_REQUESTED });
+			}
+		});
+
+		// get account and balance on app load
+		const { selectedAddress: account, networkVersion: networkId, chainId } = provider;
 		dispatch({ type: METAMASK_CONNECTED, account, chainId, networkId });
 		if (account) {
 			dispatch({ type: METAMASK_BALANCE_REQUESTED });
