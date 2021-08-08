@@ -5,10 +5,15 @@ import {
 	METAMASK_CONNECTING,
 	METAMASK_REQUIRED,
 } from '../actions/metamask.action';
-import { mmAccountSelector, mmWeb3Seletor } from '../selectors/metamask.selector';
+import {
+	mmAccountSelector,
+	mmProvierSelector,
+	mmWeb3Seletor,
+} from '../selectors/metamask.selector';
 
 export function* connectMetaMask() {
-	if (!window.ethereum) {
+	const provider = yield select(mmProvierSelector);
+	if (!provider) {
 		yield put({ type: METAMASK_REQUIRED });
 	} else {
 		try {
